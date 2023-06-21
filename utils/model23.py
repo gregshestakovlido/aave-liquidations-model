@@ -75,7 +75,8 @@ def wsteth_last_price():
 def get_wsteth_steth_price():
     ## function to get current wstETH:stETH price 
     abi = json.load(open("utils/WSTETH.json"))
-    contract = web3.eth.contract(address= Web3.toChecksumAddress(c.WSTETH_CONTRACT), abi=abi)
+    address=Web3.toChecksumAddress(c.WSTETH_CONTRACT)
+    contract = web3.eth.contract(address= address, abi=abi)
     price = contract.functions.getStETHByWstETH(1000000000000000000).call()
     price = price / pow(10,18)
     
@@ -84,7 +85,8 @@ def get_wsteth_steth_price():
 def get_wsteth_usd_price():
     ## function to get current ETH price from Aave Oracle        
     abi = json.load(open("utils/AaveOracle_v3.json"))
-    contract = web3.eth.contract(address=c.AAVE3_ORACLE_CONTRACT, abi=abi)
+    address=Web3.toChecksumAddress(c.AAVE3_ORACLE_CONTRACT)
+    contract = web3.eth.contract(address=address, abi=abi)
     price = contract.functions.getAssetPrice(Web3.toChecksumAddress('0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0')).call()
     price = price / pow(10,8)
     
