@@ -777,89 +777,38 @@ def pooldata(poolname, csv="utils/poolDF_cg.csv", balanced=False):
     A = contract.functions.A().call()
     fee = contract.functions.fee().call()
 
-    if p.basepool == "None":  # normal pool
+   
 
-        D = []
-        for i in range(len(p.coins)):
-            if p.tokentype:  # if any assets are ctokens/ytokens
-                if p.tokentype[i]:  # if asset[i] is ctoken/ytoken
-                    cAddress = contract.functions.coins(i).call()
-                    rate = tokenrate(p.tokentype[i], cAddress)
-                else:
-                    rate = 10**18
+    D = []
+    for i in range(len(p.coins)):
+        if p.tokentype:  # if any assets are ctokens/ytokens
+            if p.tokentype[i]:  # if asset[i] is ctoken/ytoken
+                cAddress = contract.functions.coins(i).call()
+                rate = tokenrate(p.tokentype[i], cAddress)
             else:
                 rate = 10**18
+        else:
+            rate = 10**18
 
-            D.append(
+        D.append(
                 contract.functions.balances(i).call()
                 * p.precmul[i]
                 * rate
                 // 10**18
             )
         
-        n = len(coins)
-        A_base = None
-        fee_base = None
-        addresses = [p.address.lower()]
+    n = len(coins)
+    A_base = None
+    fee_base = None
+    addresses = [p.address.lower()]
         
-        pl = pool(A,D,n)
-        D_balanced = pl.D()
-        tokens = D_balanced * 10**18 // contract.functions.get_virtual_price().call()
+    pl = pool(A,D,n)
+    D_balanced = pl.D()
+    tokens = D_balanced * 10**18 // contract.functions.get_virtual_price().call()
         
-        if balanced:
-            D = D_balanced
-        
+    if balanced:
+        D = D_balanced
 
-    else:  # meta-pool
-        basepool = pools.loc[p.basepool]
-        
-        for ABItype in ABItypes:
-            abi = (
-            '[{"name":"A","outputs":[{"type":"uint256","name":""}],"inputs":[],"stateMutability":"view","type":"function","gas":5227},{"name":"balances","outputs":[{"type":"uint256","name":""}],"inputs":[{"type":"'
-            + ABItype
-            + '","name":"arg0"}],"stateMutability":"view","type":"function","gas":2250},{"name":"fee","outputs":[{"type":"uint256","name":""}],"inputs":[],"stateMutability":"view","type":"function","gas":2171},{"name":"get_virtual_price","outputs":[{"type":"uint256","name":""}],"inputs":[],"stateMutability":"view","type":"function","gas":1133537},{"name":"coins","outputs":[{"type":"address","name":""}],"inputs":[{"type":"'
-            + ABItype
-            + '","name":"arg0"}],"stateMutability":"view","type":"function","gas":2310}]'
-            )
-            base_contract = w3.eth.contract(address=basepool.address, abi=abi)
-            try:
-                base_contract.functions.balances(0).call()
-                break
-            except:
-                pass
-
-
-        D = []
-        precmul = p.precmul
-        precmul.append(base_contract.functions.get_virtual_price().call() / 10**18)
-        for i in range(len(p.coins) + 1):
-            D.append(int(contract.functions.balances(i).call() * precmul[i]))
-
-
-        D_base = []
-        for i in range(len(basepool.coins)):
-            D_base.append(int(base_contract.functions.balances(i).call() * basepool.precmul[i]))
-
-        D = [D, D_base]
-        n = [len(p.coins) + 1, len(basepool.coins)]
-        coins.extend(basepool.coins)
-        A_base = base_contract.functions.A().call()
-        fee_base = base_contract.functions.fee().call()
-        addresses = [p.address.lower(), basepool.address.lower()]
-        
-        pl = pool([A, A_base], D, n)
-        D_base_balanced = pl.basepool.D()
-        tokens = D_base_balanced * 10**18 // base_contract.functions.get_virtual_price().call()
-        
-        if balanced:
-            pl = pool([A, A_base], D, n, tokens = tokens)
-            rates = pl.p[:]
-            rates[pl.max_coin] = pl.basepool.get_virtual_price()
-            if r is not None:
-                rates[pl.max_coin - 1] = int(r.price[-1])
-            xp = [x * p // 10**18 for x, p in zip(pl.x, rates)]
-            D_balanced = pl.D(xp=xp)
-            D = [D_balanced, D_base_balanced]
 
     # Get historical volume
     url = "https://api.thegraph.com/subgraphs/name/convex-community/volume-mainnet"
