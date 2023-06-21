@@ -763,10 +763,8 @@ def pooldata(poolname, csv="utils/poolDF_cg.csv", balanced=False):
 
     coins = p.coins
 
-    if p.feemul == "None":
-        feemul = None
-    else:
-        feemul = int(p.feemul)
+
+    feemul = None
 
     if p.precmul[0] == "r":
         # load redemption price data as r
