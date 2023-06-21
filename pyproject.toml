@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "aave_model_ui"
+version = "0.1.0"
+description = "Streamlit model for aave liquidations"
+authors = ["gregshestakov <91875085+gregshestakovlido@users.noreply.github.com>"]
+
+
+[tool.poetry.dependencies]
+python = ">=3.9,<3.9.7 || >3.9.7,<4.0"
+pandas = "^2.0.2"
+pytest-warnings = "^0.3.1"
+numpy = "^1.25.0"
+web3 = "^6.5.0"
+unsync = "^1.4.0"
+plotly = "^5.15.0"
+seaborn = "^0.12.2"
+streamlit = "^1.12.2"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
