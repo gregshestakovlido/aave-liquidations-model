@@ -8,7 +8,7 @@ st.title('AAVE liquidations model')
 
 
 
-with st.expander("Estimation of stETH:ETH rate after big swap of stETH for ETH in Curve pool and following liquidation"):
+with st.expander("Estimation of stETH /:ETH rate after big swap of stETH for ETH in Curve pool and following liquidation"):
     steth_amount = st.number_input('Enter stETH amount', step=1)
     exchange = st.button('Calculate')
     if exchange:
@@ -16,14 +16,14 @@ with st.expander("Estimation of stETH:ETH rate after big swap of stETH for ETH i
         st.write(f'stETH:ETH rate after swap of **{steth_amount}** stETH for ETH and following liquidations: **{result1}**')
 
 
-with st.expander("Estimation of stETH:ETH rate after remove of big amount of ETH from Curve pool and following liquidation"):
+with st.expander("Estimation of stETH/:ETH rate after remove of big amount of ETH from Curve pool and following liquidation"):
     remove_amount = st.number_input('Enter ETH amount', step=1)
     remove = st.button('Remove')
     if remove:
         result2 = model.get_peg_after_remove_eth_one(remove_amount)
         st.write(f'stETH:ETH rate after swap of **{remove_amount}** stETH for ETH and following liquidations: **{result2}**')
 
-with st.expander("Estimation of stETH:ETH rate and amount of stETH to swap which could start cascade liquidation"):
+with st.expander("Estimation of stETH/:ETH rate and amount of stETH to swap which could start cascade liquidation"):
 
     cascade_liq = st.button('Get estimation')
     if cascade_liq:
