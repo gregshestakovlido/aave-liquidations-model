@@ -338,7 +338,8 @@ def v2changepeg_rec_ethdebt(df,collateral_loan_ratio, new_peg, current_peg):
     dftemp.loc[dftemp['risk'] != False, 'namount'] = dftemp['amount']
     
     dftemp.loc[dftemp['risk'] == False, 'risk'] = 'liquidation'
-    
+    st.write('Before pivot:')
+    st.dataframe(dftemp)
     risk_distr_ch =  dftemp.pivot_table(index = f'risk', values = ['namount'], aggfunc = ['sum'])
     st.write('line 342:')
     st.dataframe(risk_distr_ch)
