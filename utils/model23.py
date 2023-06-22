@@ -345,7 +345,7 @@ def v2changepeg_rec_ethdebt(df,collateral_loan_ratio, new_peg, current_peg):
     risk_distr_ch =  dftemp.pivot_table(index = f'risk', values = ['namount'], aggfunc = ['sum'])
     forname = round(new_peg,2) 
     risk_distr_ch[f'1:{forname}'] = risk_distr_ch[('sum', 'namount')]
-    risk_distr_ch = risk_distr_ch.drop(('sum', 'namount'), axis=1)
+    risk_distr_ch = risk_distr_ch.drop(index=('sum', 'namount'), columns=1)
     
     #liquidation of positions
     liquidated_users = dftemp.query('risk == "liquidation"').index.to_list()
