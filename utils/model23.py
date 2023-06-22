@@ -318,11 +318,7 @@ def v3changepeg_rec_cycle_otherdebt(df, risk_distr, collateral_loan_ratio, curre
 
 def v2changepeg_rec_ethdebt(df,collateral_loan_ratio, new_peg, current_peg):
     ## function to calculate risk structure with change of stETH:ETH rate        
-    st.write('initial df')
-    st.dataframe(df)
     dftemp = df.copy()
-    st.write('initial after copy')
-    st.dataframe(dftemp)
     risk_rating_list = get_scale_dic(collateral_loan_ratio)
     i = new_peg/current_peg
    
@@ -342,15 +338,12 @@ def v2changepeg_rec_ethdebt(df,collateral_loan_ratio, new_peg, current_peg):
     dftemp.loc[dftemp['risk'] != False, 'namount'] = dftemp['amount']
     
     dftemp.loc[dftemp['risk'] == False, 'risk'] = 'liquidation'
-    st.write('Before pivot:')
     st.dataframe(dftemp)
     risk_distr_ch =  dftemp.pivot_table(index = f'risk', values = ['namount'], aggfunc = ['sum'])
-    st.write('line 342:')
     st.dataframe(risk_distr_ch)
     forname = round(new_peg,2) 
     risk_distr_ch[f'1:{forname}'] = risk_distr_ch[('sum', 'namount')]
     risk_distr_ch = risk_distr_ch.drop(labels=risk_distr_ch.columns[0], axis = 1)
-    st.write('line 347:')
     st.dataframe(risk_distr_ch)
     #liquidation of positions
     liquidated_users = dftemp.query('risk == "liquidation"').index.to_list()
@@ -359,11 +352,7 @@ def v2changepeg_rec_ethdebt(df,collateral_loan_ratio, new_peg, current_peg):
     
     risk_distr_ch.reindex(['A','B+','B','B-','C','D','liquidation']).fillna(0)
     risk_distr_ch.iloc[2,0] = risk_distr_ch.iloc[2,0] + dftemp.query('risk == "liquidation"')['amount'].sum()
-    st.write('line 356')
-    st.dataframe(risk_distr_ch)
     risk_distr_ch.index.fillna('liquidation')
-    st.write('after fix ')
-    st.dataframe(risk_distr_ch)
     return risk_distr_ch.reindex(['A','B+','B','B-','C','D','liquidation']).fillna(0), dftemp
 
 
@@ -421,7 +410,8 @@ def v3changepeg_rec_ethdebt_emode(df,collateral_loan_ratio, new_peg, current_peg
     risk_distr_ch =  dftemp.pivot_table(index = f'risk', values = ['namount'], aggfunc = ['sum'])
     forname = round(new_peg,2) 
     risk_distr_ch[f'1:{forname}'] = risk_distr_ch[('sum', 'namount')]
-    risk_distr_ch = risk_distr_ch.drop(['sum', 'namount'], 1)
+    
+    risk_distr_ch = risk_distr_ch.drop(('sum', 'namount'), 1)
     
     #liquidation of positions
     liquidated_users = dftemp.query('risk == "liquidation"').index.to_list()
