@@ -372,6 +372,7 @@ def v2changepeg_rec_cycle_ethdebt(df, risk_distr, collateral_loan_ratio, current
         (r, df_) = v2changepeg_rec_ethdebt(df,collateral_loan_ratio, vpg, current_peg)
         st.dataframe(risk_distr_temp)
         st.dataframe(r)
+        r = r.loc[r.index.notnull()]
         risk_distr_temp = risk_distr_temp.merge(r, how = 'outer', left_index=True, right_index=True)
 
     risk_distr_temp = risk_distr_temp.drop('stETH', 1)   
