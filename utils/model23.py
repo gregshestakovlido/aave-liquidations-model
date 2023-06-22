@@ -361,7 +361,7 @@ def v2changepeg_rec_ethdebt(df,collateral_loan_ratio, new_peg, current_peg):
     risk_distr_ch.iloc[2,0] = risk_distr_ch.iloc[2,0] + dftemp.query('risk == "liquidation"')['amount'].sum()
     st.write('line 356')
     st.dataframe(risk_distr_ch)
-    risk_distr_ch.loc[risk_distr_ch['risk'] == False, 'risk'] = 'liquidation'
+    risk_distr_ch.index.fillna('liquidation')
     st.write('after fix ')
     st.dataframe(risk_distr_ch)
     return risk_distr_ch.reindex(['A','B+','B','B-','C','D','liquidation']).fillna(0), dftemp
