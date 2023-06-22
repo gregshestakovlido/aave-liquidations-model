@@ -319,6 +319,8 @@ def v3changepeg_rec_cycle_otherdebt(df, risk_distr, collateral_loan_ratio, curre
 def v2changepeg_rec_ethdebt(df,collateral_loan_ratio, new_peg, current_peg):
     ## function to calculate risk structure with change of stETH:ETH rate        
     dftemp = df.copy()
+    st.write('initial')
+    st.dataframe(dftemp)
     risk_rating_list = get_scale_dic(collateral_loan_ratio)
     i = new_peg/current_peg
    
