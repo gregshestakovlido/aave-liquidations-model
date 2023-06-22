@@ -192,7 +192,6 @@ def get_scale_dic(collateral_loan_ratio):
 def v2changepeg_rec_otherdebt(df,collateral_loan_ratio, new_peg, current_peg):
     ## function to calculate risk structure with change of stETH:ETH rate        
     dftemp = df.copy()
-    
     risk_rating_list = get_scale_dic(collateral_loan_ratio)
     i = new_peg/current_peg
    
@@ -320,7 +319,6 @@ def v3changepeg_rec_cycle_otherdebt(df, risk_distr, collateral_loan_ratio, curre
 def v2changepeg_rec_ethdebt(df,collateral_loan_ratio, new_peg, current_peg):
     ## function to calculate risk structure with change of stETH:ETH rate        
     dftemp = df.copy()
-    
     risk_rating_list = get_scale_dic(collateral_loan_ratio)
     i = new_peg/current_peg
    
@@ -335,7 +333,6 @@ def v2changepeg_rec_ethdebt(df,collateral_loan_ratio, new_peg, current_peg):
                        or (risk_rating_list[4] < x <= risk_rating_list[3] and 'C') 
                        or (risk_rating_list[5] < x <= risk_rating_list[4] and 'D') 
                        or (risk_rating_list[5] <=x and 'liquidation') for x in dftemp['coll_ratio']]
-    
     #Aave: calc MaxAmountOfCollateral to liquidate  
     dftemp.loc[dftemp['risk'] == False, 'namount'] = dftemp['ethdebt']*c.AAVE2_CLOSE_FACTOR*c.AAVE2_LIQUIDATION_BONUS/new_peg
     dftemp.loc[dftemp['risk'] != False, 'namount'] = dftemp['amount']
@@ -343,10 +340,13 @@ def v2changepeg_rec_ethdebt(df,collateral_loan_ratio, new_peg, current_peg):
     dftemp.loc[dftemp['risk'] == False, 'risk'] = 'liquidation'
     
     risk_distr_ch =  dftemp.pivot_table(index = f'risk', values = ['namount'], aggfunc = ['sum'])
+    st.write('line 342:')
+    st.dataframe(risk_distr_ch)
     forname = round(new_peg,2) 
     risk_distr_ch[f'1:{forname}'] = risk_distr_ch[('sum', 'namount')]
     risk_distr_ch = risk_distr_ch.drop(labels=risk_distr_ch.columns[0], axis = 1)
-    
+    st.write('line 347:')
+    st.dataframe(risk_distr_ch)
     #liquidation of positions
     liquidated_users = dftemp.query('risk == "liquidation"').index.to_list()
     for u in liquidated_users:
@@ -354,7 +354,8 @@ def v2changepeg_rec_ethdebt(df,collateral_loan_ratio, new_peg, current_peg):
     
     risk_distr_ch.reindex(['A','B+','B','B-','C','D','liquidation']).fillna(0)
     risk_distr_ch.iloc[2,0] = risk_distr_ch.iloc[2,0] + dftemp.query('risk == "liquidation"')['amount'].sum()
-    
+    st.write('line 356')
+    st.dataframe(risk_distr_ch)
     return risk_distr_ch.reindex(['A','B+','B','B-','C','D','liquidation']).fillna(0), dftemp
 
 
