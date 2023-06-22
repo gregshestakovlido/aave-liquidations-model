@@ -338,13 +338,11 @@ def v2changepeg_rec_ethdebt(df,collateral_loan_ratio, new_peg, current_peg):
     dftemp.loc[dftemp['risk'] != False, 'namount'] = dftemp['amount']
     
     dftemp.loc[dftemp['risk'] == False, 'risk'] = 'liquidation'
-    st.dataframe(dftemp)
+
     risk_distr_ch =  dftemp.pivot_table(index = f'risk', values = ['namount'], aggfunc = ['sum'])
-    st.dataframe(risk_distr_ch)
     forname = round(new_peg,2) 
     risk_distr_ch[f'1:{forname}'] = risk_distr_ch[('sum', 'namount')]
     risk_distr_ch = risk_distr_ch.drop(labels=risk_distr_ch.columns[0], axis = 1)
-    st.dataframe(risk_distr_ch)
     #liquidation of positions
     liquidated_users = dftemp.query('risk == "liquidation"').index.to_list()
     for u in liquidated_users:
@@ -369,10 +367,6 @@ def v2changepeg_rec_cycle_ethdebt(df, risk_distr, collateral_loan_ratio, current
     
         (r, df_) = v2changepeg_rec_ethdebt(df,collateral_loan_ratio, vpg, current_peg)
         r = r.loc[r.index.notnull()]
-        st.write(print(risk_distr_temp.info()))
-        st.write(print(r.info()))
-        st.dataframe(risk_distr_temp)
-        st.dataframe(r)
         risk_distr_temp = risk_distr_temp.merge(r, how = 'outer', left_index=True, right_index=True)
 
     risk_distr_temp = risk_distr_temp.drop('stETH', 1)   
