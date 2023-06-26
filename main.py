@@ -2,11 +2,29 @@ import streamlit as st
 from utils import model23 as model
 import pandas as pd
 from utils import constants as c
+from utils import CurveSim
+if 'st_eth_pool' not in st.session_state:
+    st_eth_pool = CurveSim.create_steth_pool()
+    st.session_state['st_eth_pool'] = st_eth_pool
 
+if 'st_eth_price' not in st.session_state:
+    st_eth_price = model.get_wsteth_steth_price()
+    st.session_state['st_eth_price'] =st_eth_price
+        
 
 st.title('AAVE liquidations model')
+st.write(f"wstETH -> ETH  price: {st.session_state['st_eth_price']:.4f}")
+st.subheader('Curve pool stats:')
+col1, col2, col3= st.columns(3)
 
-
+with col1:
+    st.subheader(f"ETH balance: {st.session_state['st_eth_pool'].x[0]/10**18:.2f}")
+    st.subheader(f"ETH -> stETH exchange rate is {st.session_state['st_eth_pool'].info()['ETH_stETH']}")
+with col2:
+    st.header("")
+with col3:
+    st.subheader(f"stETH balance: {st.session_state['st_eth_pool'].x[1]/10**18:.2f}")
+    st.subheader(f"stETH -> ETH exchange rate is {st.session_state['st_eth_pool'].info()['stETH_ETH']}")
 
 with st.expander("Estimation of stETH-ETH rate after big swap of stETH for ETH in Curve pool and following liquidation"):
     steth_amount = st.number_input('Enter stETH amount', step=1)
@@ -28,7 +46,8 @@ with st.expander("Estimation of stETH-ETH rate and amount of stETH to swap which
     cascade_liq = st.button('Get estimation')
     if cascade_liq:
         cascade_liquidation = model.get_peg_and_exchange_amount_to_start_cascade_liq()
-        st.write(f'stETH:ETH rate after remove of {cascade_liquidation[1]} ETH from pool and following liquidations: {cascade_liquidation[0]}')
+        st.write(f'stETH:ETH rate when could start cascade liquidations: **{cascade_liquidation[0]}**')
+        st.write(f'stETH amount to exchange in Curve LP start cascade liquidations: **{cascade_liquidation[1]}**')
 
 with st.expander("Estimation of ETH price which could lead to cascade liquidation"):
 

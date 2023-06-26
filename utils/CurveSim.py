@@ -720,11 +720,9 @@ class pool:
 
     def info(self):
         balance=self.get_balances()
-        print(f'ETH balance: {round(balance[0],2):,.0f}')
-        print(f'stETH balance: {round(balance[1],2):,.0f}')
-        exchange_rate=self.get_exchange_rate()
-        print(f"stETH->ETH: {exchange_rate['stETH_ETH']}")
-        print(f"ETH->stETH: {exchange_rate['ETH_stETH']}")
+        exchange_rate = self.get_exchange_rate()
+        info_dict={'ETH_b':balance[0],'stETH_b':balance[1],"stETH_ETH":exchange_rate['stETH_ETH'],'ETH_stETH':exchange_rate['ETH_stETH']}
+        return info_dict
 
 ##Functions to get pool data
 
