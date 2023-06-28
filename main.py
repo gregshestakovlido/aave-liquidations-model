@@ -63,3 +63,7 @@ with st.expander("Get the riskiest positions in order by (w)stETH collateral amo
     if riskiest_positions:
         riskiest_positions_df = model.get_aave_riskiest_positions(riskiest_amount)
         st.dataframe(riskiest_positions_df)
+        
+test_save= st.button('Github_test')      
+if test_save:
+    model.B1v2.to_csv('data/brand_new.csv',index=False)  
